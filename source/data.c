@@ -65,7 +65,7 @@ uint32_t little_to_big(uint32_t data){
 	return data;
 }
 
-
+/*
 uint32_t main(){
 	int8_t a[33];
 	int32_t b;
@@ -95,3 +95,4 @@ uint32_t main(){
 	}
 	return 0;
 }
+*/
