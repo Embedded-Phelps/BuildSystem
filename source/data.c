@@ -54,35 +54,25 @@ void dump_memory(uint8_t * start, uint32_t length){
 }
 
 uint32_t big_to_little(uint32_t data){
-	uint32_t mask = 0x000f;
-	uint32_t temp;
-	uint32_t result;
-	uint8_t i;
-	//for(i=0;i
-		temp = data & mask;
-		result |= temp;
-		result >> 8;
-		mask << 8;
-		temp = data & mask;
-		temp << 8;
-		result |= temp;
-		result >> 8;
-		mask << 8;
-		temp = data & mask;
-		temp << 16;
-		result |= temp;
-		result >> 8;
-		mask << 8;
-		temp = data & mask;
-		temp << 24;
-		result |= temp;
-		return result;
+	
 }
+
+uint32_t little_to_big(uint32_t data){
+	data = (data>>24 & 0xff)     | \
+	       (data>>8 & 0xff00)    | \
+	       (data<<8 & 0xff0000)  | \
+	       (data<<24 & 0xff000000);
+	return data;
+}
+
 
 uint32_t main(){
 	int8_t a[33];
 	int32_t b;
 	uint8_t mode;
+	uint8_t memory[]="123456abcdef";
+	uint8_t *p=NULL;
+	uint32_t length;
 	mode=getchar();
 	switch (mode){
 		case '1': scanf("%d",&b);
@@ -93,6 +83,14 @@ uint32_t main(){
 		   	 b=my_atoi(a);
 		   	 printf("\n atoi: %d \n", b);
 		   	 break;
+		case'3': scanf("%d",&length);
+			 p=memory;
+			 dump_memory(p,length);
+			 break;
+		case'4': scanf("%x", &b);
+			 b=little_to_big(b);
+		         printf("\n %x \n",b);
+			 break;
 		default:;
 	}
 	return 0;
