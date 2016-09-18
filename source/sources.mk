@@ -1,4 +1,3 @@
-CC      = gcc
 SRCS	= main.c data.c memory.c project_1.c
 OBJ     = $(patsubst %,%.o,$(basename $(SRCS)))
 PREP	= $(patsubst %,%.i,$(basename $(SRCS)))
@@ -8,7 +7,8 @@ LIBSRC	= data.c memory.c
 AR	= ar
 INCS    = -I ../header
 BIN     = main
-CFLAGS  = -std=c99 -O0 -Wall -g
+CFLAGS  = -std=c99 -O0 -Wall -g 
+CFLAGS += -D $(ARCH) -D $(PROJ) 
 CPPFLAGS= $(INCS)
 VPATH   = ../source:../header
 RM      = rm -f
@@ -25,6 +25,7 @@ build: $(BIN)
 
 $(BIN) : $(OBJ)
 	$(CC) -o $@ $(OBJ)
+	size --format=berkeley -d $@
 
 .PHONY: compile-all
 compile-all: $(OBJ)
@@ -45,6 +46,10 @@ $(LIB) : $(LIBSRC)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $*.o
 	$(AR) r $@ $*.o
 	$(RM) $*.o
+
+.PHONY:upload
+upload: $(BIN)
+	scp $(BIN) root@192.168.7.2:/home/debian/bin/test
 
 .PHONY:clean
 clean:
