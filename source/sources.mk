@@ -10,9 +10,9 @@ BIN     = ../project
 CFLAGS  = -std=c99 -O0 -Wall -g 
 CPPFLAGS= $(INCS) -D $(ARCH)
 PROJ	= -D PROJECT_1
+LDFLAGS = -Wl,-Map=$@.map
 VPATH   = ../source:../header
 RM      = rm -f
-
 DEPDIR = .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
@@ -24,7 +24,7 @@ POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d
 build: $(BIN)
 
 $(BIN) : $(OBJ)
-	$(CC) -o $@ $(OBJ)
+	$(CC) $(LDFLAGS) -o $@ $(OBJ)
 	size --format=berkeley -d $@
 
 .PHONY: preprocess
@@ -50,6 +50,7 @@ compile-all: $(OBJ)
 $(OBJ) : $(SRCS) $(DEPDIR)/%.d
 	$(COMPILE.c)  $(SRCS)
 	$(POSTCOMPILE)
+	objdump -d $@
 
 $(DEPDIR)/%.d: ;
 .PRECIOUS: $(DEPDIR)/%.d
@@ -70,4 +71,4 @@ upload: $(BIN)
 
 .PHONY:clean
 clean:
-	$(RM) $(PREP) $(ASM) $(OBJ) $(BIN) $(LIB)
+	$(RM) $(PREP) $(ASM) $(OBJ) $(BIN) $(LIB) $(BIN).map -rf $(DEPDIR) 
