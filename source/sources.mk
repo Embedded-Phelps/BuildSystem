@@ -8,8 +8,8 @@ AR	= ar
 INCS    = -I ../header
 BIN     = ../project
 CFLAGS  = -std=c99 -O0 -Wall -g 
-CFLAGS += -D $(ARCH) -D $(PROJ) 
-CPPFLAGS= $(INCS)
+CPPFLAGS= $(INCS) -D $(ARCH)
+PROJ	= -D PROJECT_1
 VPATH   = ../source:../header
 RM      = rm -f
 
@@ -17,7 +17,7 @@ DEPDIR = .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 
-COMPILE.c = $(CC) $(DEPFLAGS) $(CFLAGS) $(CPPFLAGS) -c
+COMPILE.c = $(CC) $(DEPFLAGS) $(CFLAGS) $(CPPFLAGS) $(PROJ) -c
 POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d
 
 .PHONY: build
@@ -29,20 +29,20 @@ $(BIN) : $(OBJ)
 
 .PHONY: preprocess
 preprocess: $(SRCS)
-	$(CC) $(CFLAGS) $(CPPFLAGS) -E $^
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(PROJ) -E $^
 
 %.i : %.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) $< -E -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(PROJ) $< -E -o $@
 
 .PHONY: asm-file
 asm-file: $(SRCS)
-	$(CC) $(CFLAGS) $(CPPFLAGS) -S $^
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(PROJ) -S $^
 
 %.s : %.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) $< -E -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(PROJ) $< -E -o $@
 	
 %.o : %.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) $< -c -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(PROJ) $< -c -o $@
 
 .PHONY: compile-all
 compile-all: $(OBJ)

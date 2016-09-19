@@ -1,3 +1,5 @@
-memory.o: main.c ../header/project_1.h
+memory.o: project_1.c ../header/memory.h ../header/data.h
 
-../header/project_1.h:
+../header/memory.h:
+
+../header/data.h:

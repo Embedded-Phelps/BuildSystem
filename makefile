@@ -1,7 +1,6 @@
 SUBDIR = ./source
 MAKE = make -f sources.mk
-SOURCEMAKE = cd $(SUBDIR) && $(MAKE)
-export PROJ = 
+SOURCEMAKE = cd $(SUBDIR) && $(MAKE) 
 export ARCH = _HOST
 export CC= gcc
 
@@ -10,7 +9,7 @@ export CC= arm-linux-gnueabi-gcc
 endif 
 
 ifeq ($(ARCH), _FRDM)
-export CC = arm-none-gnueabi-gcc
+export CC = arm-none-eabi-gcc
 endif
 
 subsystem: 

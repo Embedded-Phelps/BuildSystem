@@ -1,1 +1,1 @@
-# BuildSystem
+#:q BuildSystem
