@@ -1,5 +1,7 @@
 SUBDIR = ./source
-MAKE = make
+MAKE = make -f sources.mk
+SOURCEMAKE = cd $(SUBDIR) && $(MAKE)
+export PROJ = 
 export ARCH = _HOST
 export CC= gcc
 
@@ -12,4 +14,32 @@ export CC = arm-none-gnueabi-gcc
 endif
 
 subsystem: 
-	cd $(SUBDIR) && $(MAKE)
+	$(SOURCEMAKE)
+
+.PHONY:preprocess
+preprocess:
+	$(SOURCEMAKE) $@
+%.i : 
+	$(SOURCEMAKE) $@
+
+.PHONY: compile-all
+compile-all: 
+	$(SOURCEMAKE) $@
+%.o :
+	$(SOURCEMAKE) $@
+ 
+.PHONY: build
+build:
+	$(SOURCEMAKE) $@
+
+.PHONY: upload
+upload:
+	$(SOURCEMAKE) $@
+
+.PHONY: build-lib
+build-lib:
+	$(SOURCEMAKE) $@
+
+.PHONY: clean
+clean:
+	$(SOURCEMAKE) $@

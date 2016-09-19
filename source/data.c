@@ -49,12 +49,17 @@ void dump_memory(uint8_t * start, uint32_t length){
 		return;
 	uint32_t i;
 	for(i = 0;i < length;i ++)
-		printf("%c ", *(start+i));
+		printf("%x", *(start+i));
 	printf("\n");
 }
 
 uint32_t big_to_little(uint32_t data){
-	
+	data = (data>>24 & 0xff)     | \
+               (data>>8 & 0xff00)    | \
+               (data<<8 & 0xff0000)  | \
+               (data<<24 & 0xff000000);
+        return data;
+
 }
 
 uint32_t little_to_big(uint32_t data){
@@ -65,34 +70,3 @@ uint32_t little_to_big(uint32_t data){
 	return data;
 }
 
-/*
-uint32_t main(){
-	int8_t a[33];
-	int32_t b;
-	uint8_t mode;
-	uint8_t memory[]="123456abcdef";
-	uint8_t *p=NULL;
-	uint32_t length;
-	mode=getchar();
-	switch (mode){
-		case '1': scanf("%d",&b);
-		   	  my_itoa(a,b,10);
-		    	  printf("\n itoa: %s \n",a);
-		  	  break;
-		case'2': scanf("%s",a);
-		   	 b=my_atoi(a);
-		   	 printf("\n atoi: %d \n", b);
-		   	 break;
-		case'3': scanf("%d",&length);
-			 p=memory;
-			 dump_memory(p,length);
-			 break;
-		case'4': scanf("%x", &b);
-			 b=little_to_big(b);
-		         printf("\n %x \n",b);
-			 break;
-		default:;
-	}
-	return 0;
-}
-*/

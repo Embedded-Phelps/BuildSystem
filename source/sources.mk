@@ -6,7 +6,7 @@ LIB     = libproject1.a
 LIBSRC	= data.c memory.c
 AR	= ar
 INCS    = -I ../header
-BIN     = main
+BIN     = ../project
 CFLAGS  = -std=c99 -O0 -Wall -g 
 CFLAGS += -D $(ARCH) -D $(PROJ) 
 CPPFLAGS= $(INCS)
@@ -26,6 +26,23 @@ build: $(BIN)
 $(BIN) : $(OBJ)
 	$(CC) -o $@ $(OBJ)
 	size --format=berkeley -d $@
+
+.PHONY: preprocess
+preprocess: $(SRCS)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -E $^
+
+%.i : %.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) $< -E -o $@
+
+.PHONY: asm-file
+asm-file: $(SRCS)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -S $^
+
+%.s : %.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) $< -E -o $@
+	
+%.o : %.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) $< -c -o $@
 
 .PHONY: compile-all
 compile-all: $(OBJ)

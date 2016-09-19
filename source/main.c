@@ -5,7 +5,7 @@
 
 #include <stdint.h>
 
-uint32_t main(){
+int32_t main(){
 #ifdef PROJECT_1
 	project_1_report();
 #endif

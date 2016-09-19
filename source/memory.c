@@ -10,7 +10,6 @@ int8_t my_memmove(uint8_t * src, uint8_t * dst, uint32_t length){
 	uint8_t * psrc = (uint8_t *) src;
 	uint8_t * pdst = (uint8_t *) dst;
 	if ((pdst <= psrc) || (pdst > (psrc+length))){
-		printf("forward overlapping\n");
 		for (i=0;i<length;i++){
 			*pdst = *psrc;
 			pdst++;
@@ -18,7 +17,6 @@ int8_t my_memmove(uint8_t * src, uint8_t * dst, uint32_t length){
 		}
 	}
 	else{
-	//	printf("backward overlapping\n");
 		psrc += length-1;
 		pdst += length-1;
 		for (i=0;i<length;i++){
