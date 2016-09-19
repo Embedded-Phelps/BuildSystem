@@ -66,7 +66,7 @@ $(LIB) : $(LIBSRC)
 
 .PHONY:upload
 upload: $(BIN)
-	scp $(BIN) root@192.168.7.2:/home/debian/bin/test
+	scp $(BIN) root@192.168.7.2:/home/debian/bin
 
 .PHONY:clean
 clean:
