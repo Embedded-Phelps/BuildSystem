@@ -1,63 +1,138 @@
-SRCS	= main.c data.c memory.c project_1.c
-OBJ     = $(patsubst %,%.o,$(basename $(SRCS)))
-PREP	= $(patsubst %,%.i,$(basename $(SRCS)))
-ASM	= $(patsubst %,%.s,$(basename $(SRCS)))
-LIB     = libproject1.a
-LIBSRC	= data.c memory.c
-AR	= ar
-INCS    = -I ../header
-BIN     = ../project
-CFLAGS  = -std=c99 -O0 -Wall -g 
-CPPFLAGS= $(INCS) -D $(ARCH)
-PROJ	= -D PROJECT_1
-LDFLAGS = -Wl,-Map=$@.map
-VPATH   = ../source:../header
-RM      = rm -f
-DEPDIR = .d
+
+## Customizable Section: adapt variables for your project
+##=========================================================
+
+# Source files
+SRCS	  = main.c data.c memory.c project_1.c
+
+# Project for build
+PROJ	  = -D PROJECT_1
+
+# Library Archive
+LIB       = libproject1.a
+
+# Source codes for library
+LIBSRC	  = data.c memory.c
+
+# include headers files
+INCS      = -I ../header
+
+# build target
+BIN       = ../project
+
+# Supported C standard option
+CSTD      = -std=c99
+
+# Optimization level option
+OPT	  = 0
+
+# Warning option
+WARNING   = -Wall
+
+# Debug option
+DEBUG     = -g
+
+# Flags for generating map file for linker
+MAPFILE   = -Wl,-Map=$@.map
+
+#source and header file directory
+VPATH     = ../source:../header
+
+
+## Implicit Section: change the following only when necessary
+##=========================================================
+
+# Object files
+OBJ       = $(patsubst %,%.o,$(basename $(SRCS)))
+
+# Preprocessed files
+PREP	  = $(patsubst %,%.i,$(basename $(SRCS)))
+
+# Assembly files
+ASM	  = $(patsubst %,%.s,$(basename $(SRCS)))
+
+#Preprocessor options
+CFLAGS   += -O$(OPT)
+CFLAGS   += $(CSTD)
+CFLAGS   += $(DEBUG)
+CFLAGS   += $(WARNING) 
+CPPFLAGS += $(INCS) 
+CPPFLAGS += -D $(ARCH)
+
+#Linker option
+LDFLAGS  += $(MAPFILE)
+
+
+## Stable Section: Usually the following remains unchanged
+##=========================================================
+
+#command used to generate archive
+AR	  = ar
+
+# The command used to delete files
+RM        = rm -f
+
+# Subdirectory to put dependency files 
+DEPDIR    = .d
+
+# Ensure the DEPDIR directory always exists
 $(shell mkdir -p $(DEPDIR) >/dev/null)
+
+# GCC-specific flags that convince the compiler to generate dependency files
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 
-COMPILE.c = $(CC) $(DEPFLAGS) $(CFLAGS) $(CPPFLAGS) $(PROJ) -c
+# Rename temperate .d files to real .d files
 POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d
 
-.PHONY: build
+# Define some useful variables
+COMPILE.c = $(CC) $(DEPFLAGS) $(CFLAGS) $(CPPFLAGS) $(PROJ) -c
+
+
+.PHONY: build preprocess %.i asm-file %.s compile-all %.o build-lib upload clean 
+# Rule for building target
+# ===============================================
+
 build: $(BIN)
 
-$(BIN) : $(OBJ)
+$(BIN) :$(OBJ)
 	$(CC) $(LDFLAGS) -o $@ $(OBJ)
 	size --format=berkeley -d $@
 
-.PHONY: preprocess
-preprocess: $(SRCS)
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(PROJ) -E $^
+# Rule for generating preprocessed files
+# ===============================================
+
+preprocess: $(PREP) 
 
 %.i : %.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(PROJ) $< -E -o $@
 
-.PHONY: asm-file
-asm-file: $(SRCS)
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(PROJ) -S $^
+# Rule for generating assembly files
+# ===============================================
+
+asm-file: $(ASM)
 
 %.s : %.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(PROJ) $< -E -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(PROJ) $< -S -o $@
 	
-%.o : %.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(PROJ) $< -c -o $@
+# Rule for compiling for all objects and generating dependency files
+# ===============================================
 
-.PHONY: compile-all
 compile-all: $(OBJ)
 
-$(OBJ) : $(SRCS) $(DEPDIR)/%.d
-	$(COMPILE.c)  $(SRCS)
+%.o : %.c $(DEPDIR)/%.d
+	#$(CC) $(CFLAGS) $(CPPFLAGS) $(PROJ) $< -c -o $@
+	$(COMPILE.c) $< -o $@
 	$(POSTCOMPILE)
-	objdump -d $@
+	objdump -d $@ #Comment out this command when building for FRDM
 
 $(DEPDIR)/%.d: ;
 .PRECIOUS: $(DEPDIR)/%.d
-
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))	
 
-.PHONY:build-lib
+
+# Rule for building library archives
+# ===============================================
+
 build-lib: $(LIB)
 
 $(LIB) : $(LIBSRC)
@@ -65,10 +140,17 @@ $(LIB) : $(LIBSRC)
 	$(AR) r $@ $*.o
 	$(RM) $*.o
 
-.PHONY:upload
+# Rule for uploading target executable file to BeagleBone Black
+# =============================================== 
+
 upload: $(BIN)
 	scp $(BIN) root@192.168.7.2:/home/debian/bin
 
-.PHONY:clean
+# Rule for Cleanning all make output
+# ===============================================
+
 clean:
-	$(RM) $(PREP) $(ASM) $(OBJ) $(BIN) $(LIB) $(BIN).map -rf $(DEPDIR) 
+	$(RM) $(PREP) $(ASM) $(OBJ) $(BIN) $(LIB) $(BIN).map -rf $(DEPDIR)
+
+## End of makefile by ShuTing_Guo
+##========================================================= 

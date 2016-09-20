@@ -15,6 +15,10 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#ifdef _FRDM
+//#define printf(x) how to define this function to nothing
+#endif /* _FRDM */
+
 /****************************************************
 * @name: my_itoa
 *
