@@ -1,7 +1,7 @@
 README
 ========================
 
-The makefile is for use with ECEN5013 projects that allow users to build for
+The makefile allows users to build their project for
 LINUX(host), BeagleBone Black and FRDM KL25Z. The sub-makefile(sources.mk) includes a list of the source files and includes paths that are needed by the build system.
 
 all the source codes are put under the "/source" directory;
